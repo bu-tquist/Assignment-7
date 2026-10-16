@@ -50,7 +50,62 @@ int main() {
     int choice = 0;
     scanf("%d", &choice);
 
-    // TODO: implement client logic
+    int assigned_play =  (choice == 1) ? 0 : 1;
+
+    int opp_play = (assigned_play == 0) ? 1 : 0;
+
+    struct packet pkt;
+    memset(&pkt, 0, sizeof(pkt));
+    pkt.cmd = choice;
+    pkt.player_id = assigned_play;
+
+    sendto(sock_fd, &pkt, sizeof(pkt), 0, (struct sockaddr *)&server_addr, sizeof(server_addr));
+
+    socklen_t addr_len = sizeof(server_addr);
+    int current_turn = 0;
+
+    while(1){
+        if(assigned_play == current_turn){
+            int col = -1;
+            while(col < 0 || col > 6){
+                printf("Input Move Row:");
+                if(scanf("%d", &col) != 1){
+                    while(getchar() != '\n');
+                    continue;
+                }
+            }
+
+            pkt.cmd = 3;
+            pkt.player_id = assigned_play;
+            pkt.col = col;
+
+            sendto(sock_fd, &pkt, sizeof(pkt), 0, (struct sockaddr *)&server_addr, sizeof(server_addr));
+            printf("Current Game\n");
+            printf("--------------------");
+            printf("GameID : %d", pkt.game_id);
+        }
+        struct packet game_pkt;
+        ssize_t bytes_rec = recvfrom(sock_fd, &game_pkt, sizeof(game_pkt), 0
+        ,(struct sockaddr*)&server_addr, &addr_len);
+
+        print_board(game_pkt.board);
+
+        if(game_pkt.state == assigned_play){
+            printf("YOU WIN!");
+            break;
+        }
+        else if(game_pkt.state == opp_play){
+            printf("YOU LOSE!");
+            break;
+        }
+        else if(game_pkt.state == 2){
+            printf("TIE");
+            break;
+        }
+
+        current_turn = (current_turn == 0) ? 1 : 0;
+        printf("waiting for other player...");
+    }
 
     close(sock_fd);
 

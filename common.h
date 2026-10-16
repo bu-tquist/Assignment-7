@@ -9,13 +9,30 @@
 #define BOARD_ROWS 6
 // Define any structs you may find helpful here.
 
-struct board{
-    char grid[BOARD_ROWS][BOARD_COLS];
-};
 
 struct game{
     int game_id;
-    struct board board;
+    int board[42]; //0 == X, 1 == O, -1 == empty
 };
+
+struct packet
+{
+    int cmd;
+    int game_id;
+    int player_id;
+    int col;
+    int board[42];
+    int state;
+};
+
+struct session{
+    struct game state;
+    struct sockaddr_in player_0;
+    struct sockaddr_in player_1;
+    int current_turn;
+    int p0_connected;
+    int p1_connected;
+};
+
 
 #endif

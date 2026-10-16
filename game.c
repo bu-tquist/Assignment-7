@@ -11,11 +11,14 @@ int make_move(struct game* g, int player, int col) {
         return -1;
     }
 
-    char piece = (player == 0) ? 'X' : 'O';
+    int piece = (player == 0) ? 0 : 1;
 
     for(int r = BOARD_ROWS - 1; r >= 0; r--){
-        if(g->board.grid[r][col] == '.'){
-            g->board.grid[r][col] == piece;
+        
+        int index = r * BOARD_COLS + col;
+
+        if(g->board[index] == -1){
+            g->board[index] = player;
             return r;
         }
     }
@@ -38,9 +41,10 @@ int check_win(struct game* g) {
 
     for(int r = 0; r < BOARD_ROWS; r++){
         for(int c = 0; c < BOARD_COLS; c++){
-            char current_piece = g->board.grid[r][c];
+            int current_index = r * BOARD_COLS + c;
+            int current_player = g->board[current_index];
 
-            if(current_piece == '.'){
+            if(current_player == -1){
                 continue;
             }
 
@@ -52,7 +56,8 @@ int check_win(struct game* g) {
                     int next_c = c + dc[d] * step;
 
                     if(next_r >= 0 && next_r < BOARD_ROWS && next_c >= 0 && next_c < BOARD_COLS){
-                        if(g->board.grid[next_r][next_c] == current_piece){
+                        int next_index =  next_r * BOARD_COLS + next_c;
+                        if(g->board[next_index] == current_player){
                             count++;
                         }
                         else {
@@ -64,7 +69,7 @@ int check_win(struct game* g) {
                     }
                 }
                 if(count == 4){
-                    return (current_piece == 'X') ? 0 : 1;
+                    return current_player;
                 }
             }
 
@@ -84,10 +89,8 @@ void new_game(struct game* g, int gameId) {
 
    g->game_id = gameId;
 
-   for(int r = 0; r < BOARD_ROWS; r++){
-    for(int c = 0; c < BOARD_COLS; c++){
-        g->board.grid[r][c] = '.';
-    }
+   for(int i = 0; i < 42; i){
+        g->board[i] = -1;
    }
 }
 

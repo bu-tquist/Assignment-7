@@ -83,13 +83,13 @@ int check_win(struct game* g) {
 Initializes an existing game with an empty board.
 */
 void new_game(struct game* g, int gameId) {
-   if(gameId == NULL){
+   if(g == NULL){
     return;
    }
 
    g->game_id = gameId;
 
-   for(int i = 0; i < 42; i){
+   for(int i = 0; i < 42; i++){
         g->board[i] = -1;
    }
 }

@@ -1,0 +1,2 @@
+(1) if packets are dropped to the server then it will wait until a client sends another data packet, if packets are dropped to the client then both clients will wait for a response and be stuck in an endless loop waiting for a response or their turn
+(2) some scenarios that would make save and load not work as expected include architecture mismatch and changing the size of the game since it would affect the structs and older loads would have issues

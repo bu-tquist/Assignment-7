@@ -7,6 +7,7 @@
 
 #define BOARD_COLS 7
 #define BOARD_ROWS 6
+#define MAX_GAMES 50
 // Define any structs you may find helpful here.
 
 
@@ -23,6 +24,8 @@ struct packet
     int col;
     int board[42];
     int state;
+    int ready;
+    int current_turn;
 };
 
 struct session{
@@ -32,6 +35,11 @@ struct session{
     int current_turn;
     int p0_connected;
     int p1_connected;
+};
+
+struct gameDB{
+    struct session games[MAX_GAMES];
+    int game_counter;
 };
 
 
